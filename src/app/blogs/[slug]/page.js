@@ -5,7 +5,7 @@ import { RichText } from "@/components/ui/RichText";
 import { BLOG_QUERY } from "@/constants/sanity-queries";
 import { formatDate } from "@/utils/helpers";
 import { sanityFetch, urlFor } from "@/utils/sanity";
-import { PortableText } from "next-sanity";
+import { PortableText } from "@portabletext/react";
 
 const BlogPage = async ({ params }) => {
   const blog = await sanityFetch({ query: BLOG_QUERY, params });
