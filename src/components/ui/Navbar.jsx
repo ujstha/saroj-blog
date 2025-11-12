@@ -21,6 +21,14 @@ export const Navbar = () => {
             </li>
           </ul>
           <ThemeToggle />
+          <a
+            href="https://milkywaymarket.shop/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="ml-4 rounded bg-blue-600 px-4 py-2 font-semibold text-white transition hover:bg-blue-700"
+          >
+            Shop
+          </a>
           <Link href="/buy-me-a-coffee">
             <button className="ml-4 rounded bg-yellow-400 px-4 py-2 font-semibold text-black transition hover:bg-yellow-500">
               Buy Me a Coffee
