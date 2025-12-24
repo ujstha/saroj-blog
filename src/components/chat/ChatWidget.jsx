@@ -26,6 +26,10 @@ export function ChatWidget() {
     ],
     onError: (error) => {
       console.error('Chat error:', error)
+      console.error('Error details:', JSON.stringify(error, null, 2))
+    },
+    onFinish: (message) => {
+      console.log('Message completed:', message)
     }
   })
 
@@ -43,15 +47,29 @@ export function ChatWidget() {
     handleSubmit(e)
   }
 
-  // Convert markdown links to HTML
+  // Convert markdown links to HTML with better error handling
   const formatMessage = (content) => {
-    return content
-      // Bold text
-      .replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>')
-      // Links
-      .replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" class="text-accent1 hover:underline font-medium">$1</a>')
-      // Line breaks
-      .replace(/\n/g, '<br />')
+    try {
+      return content
+        // Bold text
+        .replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>')
+        // Links - more robust pattern
+        .replace(/\[([^\]]+)\]\(([^)]+)\)/g, (match, text, url) => {
+          // Validate URL
+          try {
+            const href = url.trim()
+            return `<a href="${href}" class="text-accent1 hover:underline font-medium" target="${href.startsWith('http') ? '_blank' : '_self'}" rel="${href.startsWith('http') ? 'noopener noreferrer' : ''}">${text}</a>`
+          } catch {
+            return match // Return original if URL is invalid
+          }
+        })
+        // Line breaks
+        .replace(/\n/g, '<br />')
+    } catch (error) {
+      console.error('Format error:', error)
+      // Fallback to plain text
+      return content.replace(/\n/g, '<br />')
+    }
   }
 
   if (!isOpen) {
