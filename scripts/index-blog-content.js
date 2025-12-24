@@ -7,7 +7,7 @@
  * 1. Fetches all blog posts from Sanity CMS
  * 2. Converts Portable Text to plain text
  * 3. Chunks text into manageable pieces
- * 4. Generates embeddings using HuggingFace API (FREE)
+ * 4. Generates embeddings using Cohere API (FREE - 100 calls/min)
  * 5. Stores embeddings in Supabase for vector similarity search
  * 
  * Run: node scripts/index-blog-content.js
@@ -95,54 +95,32 @@ function chunkText(text, maxLength = 500) {
   return chunks.filter(c => c.length > 50) // Filter out very short chunks
 }
 
-// Generate embedding using free HuggingFace API
+// Generate embedding using Cohere's free API (100 calls/min)
 async function generateEmbedding(text) {
-  const HF_TOKEN = process.env.HUGGINGFACE_TOKEN
+  const COHERE_API_KEY = process.env.COHERE_API_KEY
   
-  // Try multiple endpoints in case one fails
-  const endpoints = [
-    'https://api-inference.huggingface.co/models/sentence-transformers/all-MiniLM-L6-v2',
-    'https://api-inference.huggingface.co/pipeline/feature-extraction/sentence-transformers/all-MiniLM-L6-v2'
-  ]
-  
-  const headers = {
-    'Content-Type': 'application/json'
+  if (!COHERE_API_KEY) {
+    throw new Error('COHERE_API_KEY is required. Get one from https://dashboard.cohere.com/api-keys')
   }
   
-  // Add auth token if available (increases rate limits)
-  if (HF_TOKEN) {
-    headers.Authorization = `Bearer ${HF_TOKEN}`
+  try {
+    const cohere = new CohereClient({
+      token: COHERE_API_KEY
+    })
+    
+    const response = await cohere.embed({
+      texts: [text],
+      model: 'embed-english-light-v3.0',
+      inputType: 'search_document',
+      embeddingTypes: ['float']
+    })
+    
+    return response.embeddings.float[0]
+    
+  } catch (error) {
+    console.error('Embedding generation failed:', error.message)
+    throw error
   }
-  
-  let lastError = null
-  
-  for (const endpoint of endpoints) {
-    try {
-      const response = await fetch(endpoint, {
-        method: 'POST',
-        headers,
-        body: JSON.stringify({ 
-          inputs: text,
-          options: { wait_for_model: true }
-        })
-      })
-      
-      if (response.ok) {
-        const embedding = await response.json()
-        // HuggingFace returns array of arrays or single array
-        return Array.isArray(embedding[0]) ? embedding[0] : embedding
-      }
-      
-      const error = await response.text()
-      lastError = new Error(`HuggingFace API error: ${response.status} - ${error}`)
-    } catch (error) {
-      console.error(`Failed with endpoint ${endpoint}:`, error.message)
-      lastError = error
-      continue
-    }
-  }
-  
-  throw lastError || new Error('Failed to generate embedding from all endpoints')
 }
 
 // Main indexing function

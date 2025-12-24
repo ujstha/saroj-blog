@@ -1,56 +1,39 @@
 import { socialMedias } from '@/constants'
 import { createClient } from '@supabase/supabase-js'
 import { StreamingTextResponse } from 'ai'
+import { CohereClient } from 'cohere-ai'
 import Groq from 'groq-sdk'
 
 export const runtime = 'edge'
 
 /**
- * Generate embedding for user query using free HuggingFace API
+ * Generate embedding using Cohere's free API (100 calls/min, 384-dim embeddings)
  */
 async function generateEmbedding(text) {
-  const HF_TOKEN = process.env.HUGGINGFACE_TOKEN
+  const COHERE_API_KEY = process.env.COHERE_API_KEY
   
-  // Try multiple endpoints in case one fails
-  const endpoints = [
-    'https://api-inference.huggingface.co/models/sentence-transformers/all-MiniLM-L6-v2',
-    'https://api-inference.huggingface.co/pipeline/feature-extraction/sentence-transformers/all-MiniLM-L6-v2'
-  ]
-  
-  const headers = {
-    'Content-Type': 'application/json'
+  if (!COHERE_API_KEY) {
+    throw new Error('COHERE_API_KEY is required. Get one from https://dashboard.cohere.com/api-keys')
   }
   
-  if (HF_TOKEN) {
-    headers.Authorization = `Bearer ${HF_TOKEN}`
+  try {
+    const cohere = new CohereClient({
+      token: COHERE_API_KEY
+    })
+    
+    const response = await cohere.embed({
+      texts: [text],
+      model: 'embed-english-light-v3.0',
+      inputType: 'search_query',
+      embeddingTypes: ['float']
+    })
+    
+    return response.embeddings.float[0]
+    
+  } catch (error) {
+    console.error('Embedding generation failed:', error)
+    throw error
   }
-  
-  let lastError = null
-  
-  for (const endpoint of endpoints) {
-    try {
-      const response = await fetch(endpoint, {
-        method: 'POST',
-        headers,
-        body: JSON.stringify({ 
-          inputs: text,
-          options: { wait_for_model: true }
-        })
-      })
-      
-      if (response.ok) {
-        const embedding = await response.json()
-        return Array.isArray(embedding[0]) ? embedding[0] : embedding
-      }
-      
-      lastError = new Error(`HuggingFace API error: ${response.status} ${response.statusText}`)
-    } catch (error) {
-      lastError = error
-      continue
-    }
-  }
-  
-  throw lastError || new Error('Failed to generate embedding from all endpoints')
 }
 
 /**

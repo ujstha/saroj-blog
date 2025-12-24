@@ -20,6 +20,7 @@
     "ai": "^3.4.33",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",
+    "cohere-ai": "^7.20.0",
     "eslint-config-prettier": "^9.1.0",
     "eslint-config-standard": "^17.1.0",
     "eslint-plugin-tailwindcss": "^3.17.4",
