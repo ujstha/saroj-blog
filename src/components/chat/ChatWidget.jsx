@@ -50,24 +50,33 @@ export function ChatWidget() {
   // Convert markdown links to HTML with better error handling
   const formatMessage = (content) => {
     try {
-      return content
+      let formatted = content
         // Bold text
         .replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>')
-        // Links - more robust pattern
-        .replace(/\[([^\]]+)\]\(([^)]+)\)/g, (match, text, url) => {
-          // Validate URL
-          try {
-            const href = url.trim()
-            return `<a href="${href}" class="text-accent1 hover:underline font-medium" target="${href.startsWith('http') ? '_blank' : '_self'}" rel="${href.startsWith('http') ? 'noopener noreferrer' : ''}">${text}</a>`
-          } catch {
-            return match // Return original if URL is invalid
-          }
-        })
-        // Line breaks
+        // Line breaks first
         .replace(/\n/g, '<br />')
+      
+      // Handle links more carefully - only process complete markdown links
+      // This regex checks for complete [text](url) patterns
+      formatted = formatted.replace(/\[([^\]]+)\]\(([^)]+)\)/g, (match, text, url) => {
+        try {
+          const href = url.trim()
+          // Only process if we have a valid URL
+          if (href && href.length > 0) {
+            const isExternal = href.startsWith('http')
+            return `<a href="${href}" class="text-accent1 hover:underline font-medium" ${isExternal ? 'target="_blank" rel="noopener noreferrer"' : ''}>${text}</a>`
+          }
+        } catch (err) {
+          console.warn('Link formatting error:', err)
+        }
+        // Return original if parsing fails
+        return match
+      })
+      
+      return formatted
     } catch (error) {
       console.error('Format error:', error)
-      // Fallback to plain text
+      // Fallback to plain text with line breaks only
       return content.replace(/\n/g, '<br />')
     }
   }
@@ -123,7 +132,7 @@ export function ChatWidget() {
           </div>
           <div>
             <h3 className="font-semibold text-sm">Saroj&apos;s AI Assistant</h3>
-            <p className="text-xs opacity-90">Powered by Groq (Llama 3.1)</p>
+            <p className="text-xs opacity-90">Powered by Groq Llama 3.3</p>
           </div>
         </div>
         
