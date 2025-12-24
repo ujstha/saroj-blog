@@ -1,3 +1,4 @@
+import { ChatWidget } from "@/components/chat";
 import { Footer, Navbar } from "@/components/ui";
 import Theme from "@/providers/ThemeProvider";
 import { Analytics } from '@vercel/analytics/react'; // Vercel Analytics
@@ -77,6 +78,7 @@ export default function RootLayout({ children }) {
           <SpeedInsights />
           <Analytics /> {/* Vercel Analytics */}
           <Footer />
+          <ChatWidget />
         </Theme>
       </body>
     </html>
