@@ -1,6 +1,6 @@
 import { socialMedias } from '@/constants'
 import { createClient } from '@supabase/supabase-js'
-import { StreamingTextResponse } from 'ai'
+import { OpenAIStream, StreamingTextResponse } from 'ai'
 import { CohereClient } from 'cohere-ai'
 import Groq from 'groq-sdk'
 
@@ -151,23 +151,9 @@ Saroj Bartaula is a writer, filmmaker, and content creator. You can learn more a
       stop: null
     })
     
-    // 7. Convert Groq stream to Vercel AI SDK format
-    const stream = new ReadableStream({
-      async start(controller) {
-        try {
-          for await (const chunk of completion) {
-            const text = chunk.choices[0]?.delta?.content || ''
-            if (text) {
-              controller.enqueue(new TextEncoder().encode(text))
-            }
-          }
-          controller.close()
-        } catch (error) {
-          console.error('Streaming error:', error)
-          controller.error(error)
-        }
-      }
-    })
+    // 7. Use OpenAIStream to handle the stream (Groq is OpenAI compatible)
+    // This ensures the stream uses the correct Data Stream Protocol expected by useChat
+    const stream = OpenAIStream(completion)
     
     return new StreamingTextResponse(stream)
     
