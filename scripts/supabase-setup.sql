@@ -50,6 +50,12 @@ $$;
 -- 5. Enable Row Level Security (RLS) for public read access
 alter table blog_embeddings enable row level security;
 
+-- Drop existing policies if they exist
+drop policy if exists "Allow public read access" on blog_embeddings;
+drop policy if exists "Service role can insert" on blog_embeddings;
+drop policy if exists "Service role can update" on blog_embeddings;
+drop policy if exists "Service role can delete" on blog_embeddings;
+
 -- Allow anyone to read (for chat queries)
 create policy "Allow public read access" 
 on blog_embeddings for select 
