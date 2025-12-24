@@ -1,8 +1,12 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   images: {
-    remotePatterns: [{ hostname: "cdn.sanity.io" }],
-    domains: ['images.unsplash.com'],
+    // Use remotePatterns instead of the deprecated `images.domains`.
+    // See: https://nextjs.org/docs/messages/images-domains-deprecated
+    remotePatterns: [
+      { protocol: 'https', hostname: 'cdn.sanity.io' },
+      { protocol: 'https', hostname: 'images.unsplash.com' },
+    ],
   },
 };
 
