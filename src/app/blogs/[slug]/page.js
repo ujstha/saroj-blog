@@ -30,7 +30,9 @@ const BlogPage = async ({ params }) => {
             className="absolute !size-full rounded-lg shadow-sm"
           />
         </div>
-        <PortableText value={blog?.content} components={RichText} />
+        <article className="space-y-0">
+          <PortableText value={blog?.content} components={RichText} />
+        </article>
       </div>
     </Section>
   );
