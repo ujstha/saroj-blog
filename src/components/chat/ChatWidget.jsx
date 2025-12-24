@@ -132,7 +132,7 @@ export function ChatWidget() {
           </div>
           <div>
             <h3 className="font-semibold text-sm">Saroj&apos;s AI Assistant</h3>
-            <p className="text-xs opacity-90">Powered by Groq Llama 3.3</p>
+            <p className="text-xs opacity-90">Online</p>
           </div>
         </div>
         
