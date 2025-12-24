@@ -9,8 +9,13 @@ export const runtime = 'edge'
  * Generate embedding for user query using free HuggingFace API
  */
 async function generateEmbedding(text) {
-  const HF_API_URL = 'https://api-inference.huggingface.co/pipeline/feature-extraction/sentence-transformers/all-MiniLM-L6-v2'
   const HF_TOKEN = process.env.HUGGINGFACE_TOKEN
+  
+  // Try multiple endpoints in case one fails
+  const endpoints = [
+    'https://api-inference.huggingface.co/models/sentence-transformers/all-MiniLM-L6-v2',
+    'https://api-inference.huggingface.co/pipeline/feature-extraction/sentence-transformers/all-MiniLM-L6-v2'
+  ]
   
   const headers = {
     'Content-Type': 'application/json'
@@ -20,18 +25,32 @@ async function generateEmbedding(text) {
     headers.Authorization = `Bearer ${HF_TOKEN}`
   }
   
-  const response = await fetch(HF_API_URL, {
-    method: 'POST',
-    headers,
-    body: JSON.stringify({ inputs: text })
-  })
+  let lastError = null
   
-  if (!response.ok) {
-    throw new Error(`HuggingFace API error: ${response.statusText}`)
+  for (const endpoint of endpoints) {
+    try {
+      const response = await fetch(endpoint, {
+        method: 'POST',
+        headers,
+        body: JSON.stringify({ 
+          inputs: text,
+          options: { wait_for_model: true }
+        })
+      })
+      
+      if (response.ok) {
+        const embedding = await response.json()
+        return Array.isArray(embedding[0]) ? embedding[0] : embedding
+      }
+      
+      lastError = new Error(`HuggingFace API error: ${response.status} ${response.statusText}`)
+    } catch (error) {
+      lastError = error
+      continue
+    }
   }
   
-  const embedding = await response.json()
-  return Array.isArray(embedding[0]) ? embedding[0] : embedding
+  throw lastError || new Error('Failed to generate embedding from all endpoints')
 }
 
 /**

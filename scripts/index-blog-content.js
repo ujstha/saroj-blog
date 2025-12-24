@@ -97,8 +97,13 @@ function chunkText(text, maxLength = 500) {
 
 // Generate embedding using free HuggingFace API
 async function generateEmbedding(text) {
-  const HF_API_URL = 'https://api-inference.huggingface.co/pipeline/feature-extraction/sentence-transformers/all-MiniLM-L6-v2'
   const HF_TOKEN = process.env.HUGGINGFACE_TOKEN
+  
+  // Try multiple endpoints in case one fails
+  const endpoints = [
+    'https://api-inference.huggingface.co/models/sentence-transformers/all-MiniLM-L6-v2',
+    'https://api-inference.huggingface.co/pipeline/feature-extraction/sentence-transformers/all-MiniLM-L6-v2'
+  ]
   
   const headers = {
     'Content-Type': 'application/json'
@@ -106,29 +111,38 @@ async function generateEmbedding(text) {
   
   // Add auth token if available (increases rate limits)
   if (HF_TOKEN) {
-    headers['Authorization'] = `Bearer ${HF_TOKEN}`
+    headers.Authorization = `Bearer ${HF_TOKEN}`
   }
   
-  try {
-    const response = await fetch(HF_API_URL, {
-      method: 'POST',
-      headers,
-      body: JSON.stringify({ inputs: text })
-    })
-    
-    if (!response.ok) {
+  let lastError = null
+  
+  for (const endpoint of endpoints) {
+    try {
+      const response = await fetch(endpoint, {
+        method: 'POST',
+        headers,
+        body: JSON.stringify({ 
+          inputs: text,
+          options: { wait_for_model: true }
+        })
+      })
+      
+      if (response.ok) {
+        const embedding = await response.json()
+        // HuggingFace returns array of arrays or single array
+        return Array.isArray(embedding[0]) ? embedding[0] : embedding
+      }
+      
       const error = await response.text()
-      throw new Error(`HuggingFace API error: ${response.status} - ${error}`)
+      lastError = new Error(`HuggingFace API error: ${response.status} - ${error}`)
+    } catch (error) {
+      console.error(`Failed with endpoint ${endpoint}:`, error.message)
+      lastError = error
+      continue
     }
-    
-    const embedding = await response.json()
-    
-    // HuggingFace returns array of arrays or single array
-    return Array.isArray(embedding[0]) ? embedding[0] : embedding
-  } catch (error) {
-    console.error('Embedding generation error:', error)
-    throw error
   }
+  
+  throw lastError || new Error('Failed to generate embedding from all endpoints')
 }
 
 // Main indexing function
