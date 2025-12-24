@@ -136,7 +136,7 @@ Saroj Bartaula is a writer, filmmaker, and content creator. You can learn more a
     
     console.log('Calling Groq API...')
     const completion = await groq.chat.completions.create({
-      model: 'llama-3.1-70b-versatile', // Free tier model
+      model: 'llama-3.3-70b-versatile', // Updated to current free tier model
       messages: [
         {
           role: 'system',
