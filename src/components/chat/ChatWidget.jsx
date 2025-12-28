@@ -1,5 +1,6 @@
 'use client'
 
+import { Logo } from '@/components/ui'
 import { cn } from '@/utils/cn'
 import { useChat } from 'ai/react'
 import { useEffect, useRef, useState } from 'react'
@@ -120,19 +121,17 @@ export function ChatWidget() {
       )}
     >
       {/* Header */}
-      <div className="flex items-center justify-between rounded-t-lg bg-gradient-to-r from-primary to-accent1 p-4 text-white">
-        <div className="flex items-center gap-3">
-          <div className="relative">
-            <div className="h-10 w-10 rounded-full bg-white/20 flex items-center justify-center">
-              <svg className="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
-              </svg>
+      <div className="flex items-center justify-between rounded-t-lg bg-gradient-to-r from-primary to-accent1 p-3 md:p-4 text-white">
+        <div className="flex items-center gap-2 md:gap-3 min-w-0">
+          <div className="relative flex-shrink-0">
+            <div className="h-8 w-8 md:h-10 md:w-10 rounded-full bg-white p-1 md:p-1.5 flex items-center justify-center overflow-hidden">
+              <Logo asLink={false} className="!w-full !h-full object-contain" />
             </div>
-            <span className="absolute bottom-0 right-0 h-3 w-3 rounded-full bg-green-400 border-2 border-white"></span>
+            <span className="absolute -bottom-0.5 -right-0.5 h-2.5 w-2.5 md:h-3 md:w-3 rounded-full bg-green-400 border-2 border-white"></span>
           </div>
-          <div>
-            <h3 className="font-semibold text-sm">Saroj&apos;s AI Assistant</h3>
-            <p className="text-xs opacity-90">Online</p>
+          <div className="min-w-0 flex-1">
+            <h3 className="font-semibold text-xs md:text-sm truncate">Saroj&apos;s AI Assistant</h3>
+            <p className="text-[10px] md:text-xs opacity-90">Online</p>
           </div>
         </div>
         
