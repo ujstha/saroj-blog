@@ -1,8 +1,8 @@
 'use client'
 
-import { Logo } from '@/components/ui'
 import { cn } from '@/utils/cn'
 import { useChat } from 'ai/react'
+import Image from 'next/image'
 import { useEffect, useRef, useState } from 'react'
 
 /**
@@ -124,8 +124,15 @@ export function ChatWidget() {
       <div className="flex items-center justify-between rounded-t-lg bg-gradient-to-r from-primary to-accent1 p-3 md:p-4 text-white">
         <div className="flex items-center gap-2 md:gap-3 min-w-0">
           <div className="relative flex-shrink-0">
-            <div className="h-8 w-8 md:h-10 md:w-10 rounded-full bg-white p-1 md:p-1.5 flex items-center justify-center overflow-hidden">
-              <Logo asLink={false} className="!w-full !h-full object-contain" />
+            <div className="h-8 w-8 md:h-10 md:w-10 rounded-full bg-white p-0.5 md:p-1 flex items-center justify-center overflow-hidden">
+              <Image
+                src="/assets/icons/sarojai.svg"
+                alt="Saroj AI"
+                width={40}
+                height={40}
+                className="w-full h-full object-contain"
+                priority
+              />
             </div>
             <span className="absolute -bottom-0.5 -right-0.5 h-2.5 w-2.5 md:h-3 md:w-3 rounded-full bg-green-400 border-2 border-white"></span>
           </div>
