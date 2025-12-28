@@ -1,4 +1,6 @@
 import { socialMedias } from '@/constants'
+import { PARTIAL_BLOGS_QUERY } from '@/constants/sanity-queries'
+import { sanityFetch } from '@/utils/sanity'
 import { createClient } from '@supabase/supabase-js'
 import { OpenAIStream, StreamingTextResponse } from 'ai'
 import { CohereClient } from 'cohere-ai'
@@ -59,7 +61,19 @@ export async function POST(req) {
     console.log('Generating embedding for question...')
     const queryEmbedding = await generateEmbedding(userQuestion)
     
-    // 2. Search Supabase for similar blog content
+    // 2. Fetch ALL blog titles + summaries from Sanity (for complete blog knowledge)
+    console.log('Fetching all blog content from Sanity...')
+    const allBlogs = await sanityFetch({ query: PARTIAL_BLOGS_QUERY })
+    
+    // Build comprehensive blog catalog with summaries and categories
+    const blogCatalog = allBlogs.map((b, idx) => {
+      const categories = b.categories?.length ? ` [${b.categories.join(', ')}]` : ''
+      const summary = b.shortDescription ? `\n  Summary: ${b.shortDescription}` : ''
+      const date = b.publishedAt ? `\n  Published: ${new Date(b.publishedAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}` : ''
+      return `${idx + 1}. **${b.title}**${categories}${summary}${date}\n  Link: /blogs/${b.slug}`
+    }).join('\n\n')
+    
+    // 3. Search Supabase for similar blog content
     console.log('Searching for relevant blog content...')
     const supabase = createClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL,
@@ -79,19 +93,19 @@ export async function POST(req) {
       console.error('Supabase search error:', searchError)
     }
     
-    // 3. Build context from relevant blogs
+    // 4. Build context from relevant blogs
     const blogContext = relevantBlogs?.length
       ? relevantBlogs.map((b, idx) => 
           `**Blog Post ${idx + 1}: ${b.blog_title}**\n${b.content_chunk}\n\n📖 Read more: [${b.blog_title}](/blogs/${b.blog_slug})`
         ).join('\n\n---\n\n')
       : 'No specific blog posts found for this query. Use your general knowledge about Saroj.'
     
-    // 4. Build social media links context
+    // 5. Build social media links context
     const socialLinks = socialMedias
       .map(social => `- ${social.title.charAt(0).toUpperCase() + social.title.slice(1)}: ${social.href}`)
       .join('\n')
     
-    // 5. Create comprehensive system prompt
+    // 6. Create comprehensive system prompt
     const systemPrompt = `You are Saroj Bartaula's personal blog assistant. You help visitors learn about Saroj and find relevant information from his blog posts and social profiles.
 
 **General Knowledge about Saroj & The Blog:**
@@ -100,9 +114,12 @@ export async function POST(req) {
 - **Background:** He lives in the Milky Way galaxy (playfully). He is a writer, filmmaker, and content creator.
 - **Content:** He shares what he learns and creates to help others see the world differently.
 
+**COMPLETE BLOG CATALOG (${allBlogs.length} posts with summaries):**
+${blogCatalog}
+
 **Available Context:**
 
-**BLOG CONTENT (Specific matches):**
+**BLOG CONTENT (Specific detailed matches for current query):**
 ${blogContext}
 
 **SOCIAL MEDIA & PROFILES:**
@@ -119,23 +136,25 @@ Saroj Bartaula is a writer, filmmaker, and content creator. You can learn more a
 - WordPress: https://beyondmyimagination0.wordpress.com/
 
 **Guidelines:**
-1. **Be Clever & Helpful:** If the specific blog content above doesn't answer the question, use the "General Knowledge" section to provide a good answer. Don't just say "I don't know".
-2. **Synthesize:** Combine information from specific blog posts (if found) with general knowledge.
-3. If asked about Saroj's work, filmography, or professional background, direct them to his IMDB or LinkedIn.
-4. If asked about code projects, mention his GitHub profile.
-5. Always link to full blog posts using markdown: [Post Title](/blogs/slug)
-6. Be helpful, friendly, and concise.
-7. If someone asks about contacting Saroj, mention the social media links above.
-8. Format links as clickable markdown links.
+1. **Complete Knowledge:** You have the full catalog of all ${allBlogs.length} blog posts with their summaries above. Use this to answer questions about available content.
+2. **Detailed Answers:** When users ask about specific topics, reference the relevant blog posts from the catalog and provide summaries.
+3. **Find & Recommend:** If someone asks "what blogs do you have about X?", search the catalog by categories and summaries, then list matching posts.
+4. **Summarize:** If asked to summarize a blog, use the summary from the catalog and invite them to read the full post.
+5. **Smart Search:** Combine the complete catalog (for finding blogs) with the detailed content matches (for answering specific questions).
+6. If asked about Saroj's work, filmography, or professional background, direct them to his IMDB or LinkedIn.
+7. Always link to full blog posts using markdown: [Post Title](/blogs/slug)
+8. Be helpful, friendly, and conversational.
+9. If someone asks about contacting Saroj, mention the social media links above.
 
 **Response Style:**
 - Keep answers concise (2-4 sentences) unless more detail is needed
 - Use markdown formatting for better readability
-- Include relevant links to blog posts or social profiles
-- Use emojis sparingly but appropriately (📖 for blog links, 🎬 for film, 💼 for professional)
+- Include relevant links to blog posts with context
+- Use emojis sparingly but appropriately (📖 for blog links, 🎬 for film, 💼 for professional, 🔍 for search results)
+- When listing multiple blogs, format as a numbered list with summaries
 - Be conversational and engaging`
 
-    // 6. Call Groq API (FREE - Llama 3.1 70B)
+    // 7. Call Groq API (FREE - Llama 3.1 70B)
     const groq = new Groq({
       apiKey: process.env.GROQ_API_KEY
     })
@@ -157,7 +176,7 @@ Saroj Bartaula is a writer, filmmaker, and content creator. You can learn more a
       stop: null
     })
     
-    // 7. Use OpenAIStream to handle the stream (Groq is OpenAI compatible)
+    // 8. Use OpenAIStream to handle the stream (Groq is OpenAI compatible)
     // This ensures the stream uses the correct Data Stream Protocol expected by useChat
     const stream = OpenAIStream(completion)
     
