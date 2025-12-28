@@ -172,7 +172,7 @@ export function ChatWidget() {
       {/* Messages */}
       {!isMinimized && (
         <>
-          <div className="flex-1 space-y-4 overflow-y-auto p-4 scroll-smooth">
+          <div className="flex-1 space-y-4 overflow-y-auto scroll-smooth p-4">
             {messages.map((m) => (
               <div
                 key={m.id}
@@ -191,7 +191,7 @@ export function ChatWidget() {
             ))}
             
             {isLoading && (
-              <div className="mr-8 rounded-lg border border-secondary/20 bg-secondary/10 p-3 text-sm text-secondary">
+              <div className="border-secondary/20 bg-secondary/10 mr-8 rounded-lg border p-3 text-sm text-secondary">
                 <div className="flex items-center gap-2">
                   <div className="size-2 animate-bounce rounded-full bg-primary" style={{ animationDelay: '0ms' }} />
                   <div className="size-2 animate-bounce rounded-full bg-primary" style={{ animationDelay: '150ms' }} />
@@ -210,7 +210,7 @@ export function ChatWidget() {
           </div>
 
           {/* Input */}
-          <form onSubmit={onSubmit} className="border-t border-primary/20 p-4">
+          <form onSubmit={onSubmit} className="border-primary/20 border-t p-4">
             <div className="flex gap-2">
               <input
                 value={input}
@@ -218,8 +218,8 @@ export function ChatWidget() {
                 placeholder="Ask about blog posts, work, or social links..."
                 className={cn(
                   'flex-1 rounded-lg border border-primary/20 bg-background px-4 py-2.5 text-sm',
-                  'focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20',
                   'placeholder:text-secondary/50',
+                  'focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20',
                   'disabled:cursor-not-allowed disabled:opacity-50'
                 )}
                 disabled={isLoading}
@@ -266,7 +266,7 @@ export function ChatWidget() {
                     onClick={() => {
                       handleInputChange({ target: { value: suggestion } })
                     }}
-                    className="rounded-full border border-secondary/20 bg-secondary/10 px-3 py-1 text-xs text-secondary transition-colors hover:bg-secondary/20"
+                    className="border-secondary/20 bg-secondary/10 hover:bg-secondary/20 rounded-full border px-3 py-1 text-xs text-secondary transition-colors"
                   >
                     {suggestion}
                   </button>

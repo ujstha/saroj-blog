@@ -32,7 +32,7 @@ export default function BuyMeACoffee() {
   };
 
   return (
-    <div className="relative flex min-h-screen flex-col items-center justify-center bg-black p-4 overflow-hidden">
+    <div className="relative flex min-h-screen flex-col items-center justify-center overflow-hidden bg-black p-4">
       {/* Universe background image with overlay */}
       <div className="absolute inset-0 z-0">
         <Image
@@ -42,7 +42,7 @@ export default function BuyMeACoffee() {
           className="size-full object-cover object-center opacity-60"
           priority
         />
-        <div className="absolute inset-0 opacity-40 bg-black" />
+        <div className="absolute inset-0 bg-black opacity-40" />
       </div>
       <h1 className="z-10 mb-6 flex items-center gap-2 text-3xl font-bold text-gray-100">
         Buy Me a Coffee <span role="img" aria-label="coffee">☕</span>

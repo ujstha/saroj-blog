@@ -61,7 +61,7 @@ export const RichText = {
       </h6>
     ),
     blockquote: ({ children }) => (
-      <blockquote className="relative mx-auto my-8 max-w-sm rounded-lg border border-accent1-40 px-8 py-4 text-center italic">
+      <blockquote className="relative mx-auto my-8 max-w-sm rounded-lg border px-8 py-4 text-center italic border-accent1-40">
         <span className="absolute -top-3 left-2 bg-background p-0.5 text-accent1">
           <Icon icon="quote" />
         </span>
@@ -118,7 +118,7 @@ export const RichText = {
     ),
     em: ({ children }) => <em className="italic">{children}</em>,
     code: ({ children }) => (
-      <code className="font-mono rounded bg-neutral-200 px-1.5 py-0.5 text-sm dark:bg-neutral-800">
+      <code className="rounded bg-neutral-200 px-1.5 py-0.5 font-mono text-sm dark:bg-neutral-800">
         {children}
       </code>
     ),
