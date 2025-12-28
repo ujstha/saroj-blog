@@ -88,23 +88,24 @@ export function ChatWidget() {
         onClick={() => setIsOpen(true)}
         className={cn(
           'fixed bottom-6 right-6 z-50 h-14 w-14 rounded-full shadow-lg transition-all duration-300',
-          'bg-primary hover:scale-110 hover:shadow-xl',
-          'flex items-center justify-center text-white',
-          'animate-bounce hover:animate-none'
+          'bg-white hover:scale-110 hover:shadow-xl',
+          'flex items-center justify-center',
+          'animate-bounce hover:animate-none',
+          'border-2 border-primary/20'
         )}
         aria-label="Open chat"
       >
-        <svg className="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path 
-            strokeLinecap="round" 
-            strokeLinejoin="round" 
-            strokeWidth={2} 
-            d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" 
-          />
-        </svg>
+        <Image
+          src="/assets/icons/sarojai.svg"
+          alt="Saroj AI"
+          width={48}
+          height={48}
+          className="size-10 object-contain"
+          priority
+        />
         
         {/* Notification badge */}
-        <span className="absolute -top-1 -right-1 h-5 w-5 rounded-full bg-accent1 text-xs flex items-center justify-center text-white font-semibold">
+        <span className="absolute -right-1 -top-1 flex size-5 items-center justify-center rounded-full bg-accent1 text-xs font-semibold text-white">
           AI
         </span>
       </button>
@@ -121,34 +122,34 @@ export function ChatWidget() {
       )}
     >
       {/* Header */}
-      <div className="flex items-center justify-between rounded-t-lg bg-gradient-to-r from-primary to-accent1 p-3 md:p-4 text-white">
-        <div className="flex items-center gap-2 md:gap-3 min-w-0">
-          <div className="relative flex-shrink-0">
-            <div className="h-8 w-8 md:h-10 md:w-10 rounded-full bg-white p-0.5 md:p-1 flex items-center justify-center overflow-hidden">
+      <div className="flex items-center justify-between rounded-t-lg bg-gradient-to-r from-primary to-accent1 p-3 text-white md:p-4">
+        <div className="flex min-w-0 items-center gap-2 md:gap-3">
+          <div className="relative shrink-0">
+            <div className="flex size-8 items-center justify-center overflow-hidden rounded-full bg-white p-0.5 md:size-10 md:p-1">
               <Image
                 src="/assets/icons/sarojai.svg"
                 alt="Saroj AI"
                 width={40}
                 height={40}
-                className="w-full h-full object-contain"
+                className="size-full object-contain"
                 priority
               />
             </div>
-            <span className="absolute -bottom-0.5 -right-0.5 h-2.5 w-2.5 md:h-3 md:w-3 rounded-full bg-green-400 border-2 border-white"></span>
+            <span className="absolute -bottom-0.5 -right-0.5 size-2.5 rounded-full border-2 border-white bg-green-400 md:size-3"></span>
           </div>
           <div className="min-w-0 flex-1">
-            <h3 className="font-semibold text-xs md:text-sm truncate">Saroj&apos;s AI Assistant</h3>
-            <p className="text-[10px] md:text-xs opacity-90">Online</p>
+            <h3 className="truncate text-xs font-semibold md:text-sm">Saroj&apos;s AI Assistant</h3>
+            <p className="text-[10px] opacity-90 md:text-xs">Online</p>
           </div>
         </div>
         
         <div className="flex items-center gap-2">
           <button
             onClick={() => setIsMinimized(!isMinimized)}
-            className="rounded-full p-1.5 hover:bg-white/20 transition-colors"
+            className="rounded-full p-1.5 transition-colors hover:bg-white/20"
             aria-label={isMinimized ? 'Maximize' : 'Minimize'}
           >
-            <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg className="size-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               {isMinimized ? (
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 15l7-7 7 7" />
               ) : (
@@ -158,10 +159,10 @@ export function ChatWidget() {
           </button>
           <button
             onClick={() => setIsOpen(false)}
-            className="rounded-full p-1.5 hover:bg-white/20 transition-colors"
+            className="rounded-full p-1.5 transition-colors hover:bg-white/20"
             aria-label="Close chat"
           >
-            <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg className="size-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
             </svg>
           </button>
@@ -171,15 +172,15 @@ export function ChatWidget() {
       {/* Messages */}
       {!isMinimized && (
         <>
-          <div className="flex-1 space-y-4 overflow-y-auto p-4 scroll-smooth">
+          <div className="flex-1 space-y-4 overflow-y-auto scroll-smooth p-4">
             {messages.map((m) => (
               <div
                 key={m.id}
                 className={cn(
-                  'rounded-lg p-3 text-sm animate-in fade-in slide-in-from-bottom-2 duration-300',
+                  'animate-in fade-in slide-in-from-bottom-2 rounded-lg p-3 text-sm duration-300',
                   m.role === 'user'
-                    ? 'ml-8 bg-primary/10 text-primary border border-primary/20'
-                    : 'mr-8 bg-secondary/10 text-secondary border border-secondary/20'
+                    ? 'ml-8 border border-primary/20 bg-primary/10 text-primary'
+                    : 'mr-8 border border-secondary/20 bg-secondary/10 text-secondary'
                 )}
               >
                 <div
@@ -190,17 +191,17 @@ export function ChatWidget() {
             ))}
             
             {isLoading && (
-              <div className="mr-8 rounded-lg bg-secondary/10 p-3 text-sm text-secondary border border-secondary/20">
+              <div className="border-secondary/20 bg-secondary/10 mr-8 rounded-lg border p-3 text-sm text-secondary">
                 <div className="flex items-center gap-2">
-                  <div className="h-2 w-2 animate-bounce rounded-full bg-primary" style={{ animationDelay: '0ms' }} />
-                  <div className="h-2 w-2 animate-bounce rounded-full bg-primary" style={{ animationDelay: '150ms' }} />
-                  <div className="h-2 w-2 animate-bounce rounded-full bg-primary" style={{ animationDelay: '300ms' }} />
+                  <div className="size-2 animate-bounce rounded-full bg-primary" style={{ animationDelay: '0ms' }} />
+                  <div className="size-2 animate-bounce rounded-full bg-primary" style={{ animationDelay: '150ms' }} />
+                  <div className="size-2 animate-bounce rounded-full bg-primary" style={{ animationDelay: '300ms' }} />
                 </div>
               </div>
             )}
             
             {error && (
-              <div className="mr-8 rounded-lg bg-red-100 dark:bg-red-900/20 p-3 text-sm text-red-600 dark:text-red-400 border border-red-300 dark:border-red-800">
+              <div className="mr-8 rounded-lg border border-red-300 bg-red-100 p-3 text-sm text-red-600 dark:border-red-800 dark:bg-red-900/20 dark:text-red-400">
                 ⚠️ Error: {error.message}
               </div>
             )}
@@ -209,7 +210,7 @@ export function ChatWidget() {
           </div>
 
           {/* Input */}
-          <form onSubmit={onSubmit} className="border-t border-primary/20 p-4">
+          <form onSubmit={onSubmit} className="border-primary/20 border-t p-4">
             <div className="flex gap-2">
               <input
                 value={input}
@@ -217,8 +218,8 @@ export function ChatWidget() {
                 placeholder="Ask about blog posts, work, or social links..."
                 className={cn(
                   'flex-1 rounded-lg border border-primary/20 bg-background px-4 py-2.5 text-sm',
-                  'focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20',
                   'placeholder:text-secondary/50',
+                  'focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20',
                   'disabled:cursor-not-allowed disabled:opacity-50'
                 )}
                 disabled={isLoading}
@@ -227,15 +228,14 @@ export function ChatWidget() {
                 type="submit"
                 disabled={isLoading || !input.trim()}
                 className={cn(
-                  'rounded-lg bg-primary px-4 py-2.5 text-sm font-medium text-white',
-                  'hover:bg-primary/90 transition-colors',
-                  'disabled:cursor-not-allowed disabled:opacity-50',
-                  'flex items-center gap-2'
+                  'flex items-center gap-2 rounded-lg bg-primary px-4 py-2.5 text-sm font-medium text-white',
+                  'transition-colors hover:bg-primary/90',
+                  'disabled:cursor-not-allowed disabled:opacity-50'
                 )}
               >
                 {isLoading ? (
                   <>
-                    <svg className="h-4 w-4 animate-spin" fill="none" viewBox="0 0 24 24">
+                    <svg className="size-4 animate-spin" fill="none" viewBox="0 0 24 24">
                       <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
                       <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
                     </svg>
@@ -243,7 +243,7 @@ export function ChatWidget() {
                   </>
                 ) : (
                   <>
-                    <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg className="size-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
                     </svg>
                     <span className="hidden sm:inline">Send</span>
@@ -266,7 +266,7 @@ export function ChatWidget() {
                     onClick={() => {
                       handleInputChange({ target: { value: suggestion } })
                     }}
-                    className="rounded-full bg-secondary/10 px-3 py-1 text-xs text-secondary hover:bg-secondary/20 transition-colors border border-secondary/20"
+                    className="border-secondary/20 bg-secondary/10 hover:bg-secondary/20 rounded-full border px-3 py-1 text-xs text-secondary transition-colors"
                   >
                     {suggestion}
                   </button>

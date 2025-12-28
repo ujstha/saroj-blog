@@ -22,7 +22,7 @@ export default function ThankYouContent() {
   if (!sessionId) return null;
 
   return (
-    <div className="relative flex min-h-screen flex-col items-center justify-center bg-black p-4 overflow-hidden">
+    <div className="relative flex min-h-screen flex-col items-center justify-center overflow-hidden bg-black p-4">
       {/* Universe simulation background image with overlay */}
       <div className="absolute inset-0 z-0">
         <Image
@@ -32,7 +32,7 @@ export default function ThankYouContent() {
           className="size-full object-cover object-center opacity-60"
           priority
         />
-        <div className="absolute inset-0 opacity-40 bg-black" />
+        <div className="absolute inset-0 bg-black opacity-40" />
       </div>
       <div className="z-10 flex flex-col items-center">
         <div className="mb-6 animate-bounce">

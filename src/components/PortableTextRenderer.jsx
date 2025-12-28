@@ -20,27 +20,27 @@ export const PortableTextRenderer = ({ value }) => {
   const components = {
     block: {
       h1: ({ children }) => (
-        <h1 className="text-3xl font-bold mb-4 leading-tight">{children}</h1>
+        <h1 className="mb-4 text-3xl font-bold leading-tight">{children}</h1>
       ),
       h2: ({ children }) => (
-        <h2 className="text-2xl font-semibold mb-3 leading-tight">{children}</h2>
+        <h2 className="mb-3 text-2xl font-semibold leading-tight">{children}</h2>
       ),
       h3: ({ children }) => (
-        <h3 className="text-xl font-medium mb-2">{children}</h3>
+        <h3 className="mb-2 text-xl font-medium">{children}</h3>
       ),
       normal: ({ children }) => (
         <p className="mb-4 text-base leading-7 text-secondary">{children}</p>
       ),
       blockquote: ({ children }) => (
-        <blockquote className="my-4 pl-4 border-l-2 italic text-secondary">{children}</blockquote>
+        <blockquote className="my-4 border-l-2 pl-4 italic text-secondary">{children}</blockquote>
       ),
     },
     list: {
       bullet: ({ children }) => (
-        <ul className="list-disc ml-6 mb-4">{children}</ul>
+        <ul className="mb-4 ml-6 list-disc">{children}</ul>
       ),
       number: ({ children }) => (
-        <ol className="list-decimal ml-6 mb-4">{children}</ol>
+        <ol className="mb-4 ml-6 list-decimal">{children}</ol>
       ),
     },
     types: {
@@ -52,7 +52,7 @@ export const PortableTextRenderer = ({ value }) => {
 
         return (
           <div className="my-6">
-            <CustomImage src={src} alt={alt} className="w-full h-auto rounded" />
+            <CustomImage src={src} alt={alt} className="h-auto w-full rounded" />
             {value?.caption && (
               <p className="mt-2 text-sm text-secondary">{value.caption}</p>
             )}
@@ -60,7 +60,7 @@ export const PortableTextRenderer = ({ value }) => {
         );
       },
       code: ({ value }) => (
-        <pre className="my-4 rounded bg-neutral-900 p-4 text-sm text-white overflow-auto">{value.code}</pre>
+        <pre className="my-4 overflow-auto rounded bg-neutral-900 p-4 text-sm text-white">{value.code}</pre>
       ),
     },
     marks: {

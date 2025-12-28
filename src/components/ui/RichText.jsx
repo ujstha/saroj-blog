@@ -15,7 +15,7 @@ export const RichText = {
             />
           </div>
           {value?.caption && (
-            <p className="mt-2 text-center text-sm text-secondary italic">
+            <p className="mt-2 text-center text-sm italic text-secondary">
               {value.caption}
             </p>
           )}
@@ -23,7 +23,7 @@ export const RichText = {
       );
     },
     code: ({ value }) => (
-      <pre className="my-6 rounded-lg bg-neutral-900 p-4 text-sm text-white overflow-x-auto">
+      <pre className="my-6 overflow-x-auto rounded-lg bg-neutral-900 p-4 text-sm text-white">
         <code>{value.code}</code>
       </pre>
     ),
@@ -118,7 +118,7 @@ export const RichText = {
     ),
     em: ({ children }) => <em className="italic">{children}</em>,
     code: ({ children }) => (
-      <code className="rounded bg-neutral-200 px-1.5 py-0.5 text-sm font-mono dark:bg-neutral-800">
+      <code className="rounded bg-neutral-200 px-1.5 py-0.5 font-mono text-sm dark:bg-neutral-800">
         {children}
       </code>
     ),
