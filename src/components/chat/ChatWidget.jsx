@@ -88,20 +88,21 @@ export function ChatWidget() {
         onClick={() => setIsOpen(true)}
         className={cn(
           'fixed bottom-6 right-6 z-50 h-14 w-14 rounded-full shadow-lg transition-all duration-300',
-          'bg-primary hover:scale-110 hover:shadow-xl',
-          'flex items-center justify-center text-white',
-          'animate-bounce hover:animate-none'
+          'bg-white hover:scale-110 hover:shadow-xl',
+          'flex items-center justify-center',
+          'animate-bounce hover:animate-none',
+          'border-2 border-primary/20'
         )}
         aria-label="Open chat"
       >
-        <svg className="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path 
-            strokeLinecap="round" 
-            strokeLinejoin="round" 
-            strokeWidth={2} 
-            d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" 
-          />
-        </svg>
+        <Image
+          src="/assets/icons/sarojai.svg"
+          alt="Saroj AI"
+          width={48}
+          height={48}
+          className="w-10 h-10 object-contain"
+          priority
+        />
         
         {/* Notification badge */}
         <span className="absolute -top-1 -right-1 h-5 w-5 rounded-full bg-accent1 text-xs flex items-center justify-center text-white font-semibold">
