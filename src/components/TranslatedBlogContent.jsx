@@ -73,8 +73,10 @@ export const TranslatedBlogContent = ({ content, slug, title: originalTitle, sho
     try {
       const textBlocks = portableTextToBlocks(content);
 
-      // Combine title + all blocks into ONE string separated by |||
-      const allTexts = [originalTitle, ...textBlocks.map((b) => b.text)];
+      const blocksToTranslate = textBlocks.filter((block) => block.text.trim().length > 0);
+
+      // Combine title + all non-empty blocks into ONE string separated by |||
+      const allTexts = [originalTitle, ...blocksToTranslate.map((b) => b.text)];
       const combinedText = allTexts.join(SEPARATOR);
 
       const res = await fetch("/api/translate", {
@@ -98,16 +100,32 @@ export const TranslatedBlogContent = ({ content, slug, title: originalTitle, sho
 
       // Split translated text back into parts (first part is title, rest are blocks)
       const translatedParts = data.translatedText.split(SEPARATOR);
+      let translateIndex = 0;
 
-      const translated = textBlocks.map((block, i) => ({
-        ...block,
-        translatedText: cleanEmDashes(translatedParts[i + 1]?.trim() || block.text),
-      }));
+      const translated = textBlocks.map((block) => {
+        if (block.text.trim().length === 0) {
+          return {
+            ...block,
+            translatedText: block.text,
+          };
+        }
+
+        const translatedText = translatedParts[++translateIndex];
+        return {
+          ...block,
+          translatedText: cleanEmDashes(
+            translatedText !== undefined ? translatedText : block.text
+          ),
+        };
+      });
 
       setTranslatedBlocks(translated);
 
       // Build plain text for audio playback
-      const plainText = translated.map((b) => b.translatedText).join(". ");
+      const plainText = translated
+        .map((b) => b.translatedText)
+        .filter((t) => t.trim())
+        .join(". ");
       setTranslatedPlainText(cleanEmDashes(plainText));
 
       // Cache
@@ -177,6 +195,9 @@ export const TranslatedBlogContent = ({ content, slug, title: originalTitle, sho
       )}
       <article>
         {translatedBlocks.map((block, index) => {
+          const hasContent = block.translatedText?.trim().length > 0;
+          // Skip empty blocks entirely to avoid stacking blank paragraph gaps.
+          if (!hasContent) return null;
           const BlockTag = getBlockTag(block.style);
           const blockClass = getBlockClass(block.style);
           return (
@@ -212,21 +233,21 @@ function getBlockClass(style) {
   // These classes match the original RichText component exactly
   switch (style) {
     case "h1":
-      return "mb-4 mt-8 text-2xl font-bold leading-tight md:text-3xl";
+      return "mb-5 mt-10 text-balance text-2xl font-bold leading-tight text-primary md:text-3xl";
     case "h2":
-      return "mb-3 mt-8 text-xl font-semibold leading-tight md:text-2xl";
+      return "mb-4 mt-10 text-balance text-xl font-bold leading-tight text-primary md:text-2xl";
     case "h3":
-      return "mb-3 mt-6 text-lg font-semibold leading-tight md:text-xl";
+      return "mb-3 mt-8 text-balance text-lg font-semibold leading-snug text-primary md:text-xl";
     case "h4":
-      return "mb-2 mt-6 text-base font-semibold leading-tight md:text-lg";
+      return "mb-3 mt-6 text-base font-semibold leading-snug text-primary md:text-lg";
     case "h5":
-      return "mb-2 mt-4 text-base font-medium leading-tight";
+      return "mb-2 mt-5 text-base font-medium leading-snug text-primary";
     case "h6":
-      return "mb-2 mt-4 text-sm font-medium uppercase leading-tight tracking-wide";
+      return "mb-2 mt-5 text-sm font-medium uppercase leading-snug tracking-wide text-primary";
     case "blockquote":
-      return "relative mx-auto my-8 max-w-sm rounded-lg border border-accent1-40 px-8 py-4 text-center italic";
+      return "relative mx-auto my-8 max-w-xl rounded-lg border border-accent1-40 px-8 py-5 text-center text-lg italic leading-relaxed whitespace-pre-wrap";
     default:
-      return "mb-5 text-sm leading-7 text-secondary lg:text-base";
+      return "mb-5 whitespace-pre-wrap text-base leading-8 tracking-normal text-secondary md:mb-6 md:text-lg md:leading-8";
   }
 }
 

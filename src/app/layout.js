@@ -8,7 +8,7 @@ import dynamic from "next/dynamic";
 import Script from "next/script";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { bodyFont, nepaliFont } from "./fonts";
+import { bodyFont, headingFont, nepaliFont } from "./fonts";
 import "./globals.css";
 
 // Lazy-load heavy client widgets — not needed for initial paint
@@ -19,17 +19,40 @@ const LazyChatWidget = dynamic(
 
 const GTM_ID = process.env.NEXT_PUBLIC_GTM_ID;
 const GA_ID = process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS_ID;
+const SITE_URL = "https://sarojbartaula.com";
+const SITE_DESCRIPTION =
+  "Saroj Bartaula is a software and AI engineer, founder of Tenslam Vision and independent filmmaker based in Barcelona, working across computer vision, human motion, simulation and Physical AI.";
 
 export const metadata = {
-  metadataBase: new URL(process.env.NEXT_PUBLIC_BASE_URL || 'https://localhost:3000'),
+  metadataBase: new URL(SITE_URL),
   title: {
     template: "%s | Saroj Bartaula",
-    default: "Saroj Bartaula: A personal blog",
+    default: "Saroj Bartaula | AI & Software Engineer, Founder of Tenslam Vision",
   },
-  description:
-    "Welcome to my blog, a space where I share my insights on various topics including science, technology, Effective Accelerationism, machine learning, space travel, startup experiences, and personal stories. Each post offers a glimpse into my mind and my journey.",
+  description: SITE_DESCRIPTION,
   alternates: {
-    canonical: './',
+    canonical: `${SITE_URL}/`,
+  },
+  openGraph: {
+    type: "website",
+    siteName: "Saroj Bartaula",
+    title: "Saroj Bartaula | AI & Software Engineer, Founder of Tenslam Vision",
+    description: SITE_DESCRIPTION,
+    url: `${SITE_URL}/`,
+    images: [
+      {
+        url: "/assets/saroj-bartaula.webp",
+        width: 500,
+        height: 500,
+        alt: "Saroj Bartaula",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Saroj Bartaula | AI & Software Engineer, Founder of Tenslam Vision",
+    description: SITE_DESCRIPTION,
+    images: ["/assets/saroj-bartaula.webp"],
   },
 };
 
@@ -80,7 +103,7 @@ export default function RootLayout({ children }) {
           </>
         )}
       </head>
-      <body className={`${bodyFont.className} ${nepaliFont.variable}`}>
+      <body className={`${bodyFont.variable} ${bodyFont.className} ${headingFont.variable} ${nepaliFont.variable} antialiased`}>
         <noscript
           dangerouslySetInnerHTML={{
             __html: `

@@ -34,21 +34,26 @@ const Blogs = async ({ searchParams }) => {
   }
 
   return (
-    <Section>
+    <Section className="pt-4 md:pt-6">
       <Container>
-        <h1
-          className={`mb-6 text-2xl font-bold capitalize ${headingFont.className}`}
-        >
-          {category ?? "Recent"} blogs
-        </h1>
+        <div className="mb-8 flex flex-col gap-3 md:mb-10">
+          <p className="text-[11px] uppercase tracking-[0.34em] text-secondary">
+            Browse the archive
+          </p>
+          <h1
+            className={`text-3xl font-bold capitalize tracking-[0.06em] md:text-5xl ${headingFont.className}`}
+          >
+            {category ?? "Recent"} blogs
+          </h1>
+        </div>
 
         {/* Sort filter: Recent / Popular */}
         <Suspense fallback={null}>
           <BlogSortFilter category={category} />
         </Suspense>
 
-        <div className="flex flex-col items-start justify-between gap-4 sm:flex-row">
-          <div className="grid w-full grid-cols-1 gap-4 sm:w-2/3">
+        <div className="flex flex-col items-start justify-between gap-6 lg:flex-row lg:gap-8">
+          <div className="grid w-full grid-cols-1 gap-5 lg:w-[68%]">
             {blogs?.length === 0 && (
               <div className="w-full">
                 <T k="blog.notAvailable" fallback="Blogs are not available" />
@@ -58,11 +63,14 @@ const Blogs = async ({ searchParams }) => {
               <BlogItem key={blog?.slug} blog={blog} />
             ))}
           </div>
-          <div className="sticky top-20 w-full rounded-xl border p-4 border-secondary-10 bg-accent1-5 sm:w-1/3">
-            <h2 className="mb-4 text-lg font-bold">
+          <div className="border-primary/10 bg-background/75 w-full rounded-[28px] border p-5 shadow-[0_18px_44px_rgba(10,18,28,0.06)] lg:sticky lg:top-24 lg:w-[32%]">
+            <p className="mb-2 text-[11px] uppercase tracking-[0.32em] text-secondary">
+              Filters
+            </p>
+            <h2 className="mb-4 text-xl font-bold text-primary">
               <T k="blog.exploreCategories" fallback="Explore Categories" />
             </h2>
-            <div className="flex flex-wrap gap-2">
+            <div className="flex flex-wrap gap-2.5">
               {categories?.map(({ title }) => (
                 <BlogCategoryItem key={title} category={title} size="lg" />
               ))}

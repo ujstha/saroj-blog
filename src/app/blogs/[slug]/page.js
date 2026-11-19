@@ -7,6 +7,9 @@ import { BLOG_QUERY } from "@/constants/sanity-queries";
 import { formatDate } from "@/utils/helpers";
 import { sanityFetch, urlFor } from "@/utils/sanity";
 
+const SITE_URL = "https://sarojbartaula.com";
+const PERSON_ID = `${SITE_URL}/about#saroj-bartaula`;
+
 export async function generateMetadata({ params }) {
   const blog = await sanityFetch({ query: BLOG_QUERY, params });
   return {
@@ -20,9 +23,35 @@ export async function generateMetadata({ params }) {
 
 const BlogPage = async ({ params }) => {
   const blog = await sanityFetch({ query: BLOG_QUERY, params });
+  const canonicalUrl = `${SITE_URL}/blogs/${params.slug}`;
+  const articleJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "BlogPosting",
+    headline: blog?.title,
+    description: blog?.shortDescription,
+    datePublished: blog?.publishedAt,
+    dateModified: blog?._updatedAt || blog?.publishedAt,
+    mainEntityOfPage: canonicalUrl,
+    image: blog?.blogImage ? urlFor(blog.blogImage) : undefined,
+    author: {
+      "@type": "Person",
+      "@id": PERSON_ID,
+      name: "Saroj Bartaula",
+      url: `${SITE_URL}/about`,
+    },
+    publisher: {
+      "@type": "Person",
+      "@id": PERSON_ID,
+      name: "Saroj Bartaula",
+    },
+  };
 
   return (
     <Section>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(articleJsonLd) }}
+      />
       <div className="mx-auto max-w-3xl">
         <p className="flex items-center gap-1 text-sm text-secondary">
           <Icon icon="clock" />
@@ -41,12 +70,14 @@ const BlogPage = async ({ params }) => {
             className="absolute !size-full rounded-lg shadow-sm"
           />
         </div>
-        <TranslatedBlogContent
-          content={blog?.content}
-          slug={params.slug}
-          title={blog?.title}
-          showListenButton
-        />
+        <div className="mx-auto max-w-2xl">
+          <TranslatedBlogContent
+            content={blog?.content}
+            slug={params.slug}
+            title={blog?.title}
+            showListenButton
+          />
+        </div>
       </div>
     </Section>
   );

@@ -2,7 +2,7 @@ import { cn } from "@/utils/cn";
 
 export const Section = ({ children, className }) => {
   return (
-    <section className={cn("py-8 sm:py-10 px-2 md:py-14", className)}>
+    <section className={cn("px-4 py-8 sm:px-6 sm:py-10 md:py-14", className)}>
       {children}
     </section>
   );

@@ -1,6 +1,6 @@
 import { sanityFetch } from "@/utils/sanity";
 
-const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
+const BASE_URL = "https://sarojbartaula.com";
 
 const ALL_SLUGS_QUERY = `*[_type == "blog"]{'slug': slug.current, _updatedAt}`;
 
@@ -16,10 +16,16 @@ export default async function sitemap() {
 
   return [
     {
-      url: BASE_URL,
+      url: `${BASE_URL}/`,
       lastModified: new Date(),
       changeFrequency: "daily",
       priority: 1,
+    },
+    {
+      url: `${BASE_URL}/about`,
+      lastModified: new Date(),
+      changeFrequency: "monthly",
+      priority: 0.9,
     },
     {
       url: `${BASE_URL}/blogs`,

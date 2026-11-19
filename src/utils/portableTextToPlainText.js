@@ -39,6 +39,5 @@ export function portableTextToBlocks(blocks) {
       text: block.children
         .map((child) => (child._type === "span" ? child.text || "" : ""))
         .join(""),
-    }))
-    .filter((b) => b.text.trim().length > 0);
+    }));
 }

@@ -8,6 +8,35 @@ import Groq from 'groq-sdk'
 
 export const runtime = 'edge'
 
+const MAX_CATALOG_POSTS = 20
+const MAX_CONTEXT_MATCHES = 3
+
+function formatBlogCatalog(blogs) {
+  return blogs.slice(0, MAX_CATALOG_POSTS).map((blog, index) => {
+    const categories = blog.categories?.length ? ` [${blog.categories.join(', ')}]` : ''
+    const summary = blog.shortDescription ? `\nSummary: ${blog.shortDescription}` : ''
+    const date = blog.publishedAt
+      ? `\nPublished: ${new Date(blog.publishedAt).toLocaleDateString('en-US', {
+          month: 'short',
+          day: 'numeric',
+          year: 'numeric'
+        })}`
+      : ''
+
+    return `${index + 1}. ${blog.title}${categories}${summary}${date}\nLink: /blogs/${blog.slug}`
+  }).join('\n\n')
+}
+
+function formatRelevantContext(relevantBlogs) {
+  if (!relevantBlogs?.length) {
+    return 'No specific indexed passages matched this question. Use the catalog and profile context only.'
+  }
+
+  return relevantBlogs.slice(0, MAX_CONTEXT_MATCHES).map((blog, index) => (
+    `Match ${index + 1}: ${blog.blog_title}\n${blog.content_chunk}\nLink: /blogs/${blog.blog_slug}`
+  )).join('\n\n---\n\n')
+}
+
 /**
  * Generate embedding using Cohere's free API (100 calls/min, 384-dim embeddings)
  */
@@ -66,12 +95,7 @@ export async function POST(req) {
     const allBlogs = await sanityFetch({ query: PARTIAL_BLOGS_QUERY })
     
     // Build comprehensive blog catalog with summaries and categories
-    const blogCatalog = allBlogs.map((b, idx) => {
-      const categories = b.categories?.length ? ` [${b.categories.join(', ')}]` : ''
-      const summary = b.shortDescription ? `\n  Summary: ${b.shortDescription}` : ''
-      const date = b.publishedAt ? `\n  Published: ${new Date(b.publishedAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}` : ''
-      return `${idx + 1}. **${b.title}**${categories}${summary}${date}\n  Link: /blogs/${b.slug}`
-    }).join('\n\n')
+    const blogCatalog = formatBlogCatalog(allBlogs)
     
     // 3. Search Supabase for similar blog content
     console.log('Searching for relevant blog content...')
@@ -94,11 +118,7 @@ export async function POST(req) {
     }
     
     // 4. Build context from relevant blogs
-    const blogContext = relevantBlogs?.length
-      ? relevantBlogs.map((b, idx) => 
-          `**Blog Post ${idx + 1}: ${b.blog_title}**\n${b.content_chunk}\n\n📖 Read more: [${b.blog_title}](/blogs/${b.blog_slug})`
-        ).join('\n\n---\n\n')
-      : 'No specific blog posts found for this query. Use your general knowledge about Saroj.'
+    const blogContext = formatRelevantContext(relevantBlogs)
     
     // 5. Build social media links context
     const socialLinks = socialMedias
@@ -106,62 +126,68 @@ export async function POST(req) {
       .join('\n')
     
     // 6. Create comprehensive system prompt
-    const systemPrompt = `You are Saroj Bartaula's personal blog assistant. You help visitors learn about Saroj and find relevant information from his blog posts and social profiles.
+    const systemPrompt = `You are Saroj AI, the assistant for Saroj Bartaula's personal site.
 
-**General Knowledge about Saroj & The Blog:**
-- **Themes:** Saroj writes about Technology, Storytelling, Science, and Filmmaking.
-- **Mission:** "Ideas in Motion" - driven by curiosity to explore the world and inspire others.
-- **Background:** He lives in the Milky Way galaxy (playfully). He is a writer, filmmaker, and content creator.
-- **Content:** He shares what he learns and creates to help others see the world differently.
+  Brand voice:
+  - Calm, sharp, curious, and direct.
+  - Minimal, not hypey.
+  - Helpful without sounding generic.
 
-**COMPLETE BLOG CATALOG (${allBlogs.length} posts with summaries):**
-${blogCatalog}
+  What Saroj publishes:
+  - Technology
+  - Storytelling
+  - Science
+  - Filmmaking
 
-**Available Context:**
+  About Saroj:
+  - Writer, filmmaker, and content creator.
+  - Mission: Ideas in Motion.
+  - Playful line: he lives in the Milky Way galaxy.
 
-**BLOG CONTENT (Specific detailed matches for current query):**
-${blogContext}
+  Profile links:
+  - LinkedIn: https://www.linkedin.com/in/man-on-mission/
+  - IMDB: https://www.imdb.com/name/nm10841378/
+  - GitHub: https://github.com/saroj479
+  - Facebook: https://www.facebook.com/saroj.bartaula.man.on.mission
+  - Instagram: https://www.instagram.com/saroj_bartaula/
+  - Twitter/X: https://x.com/saroj_bartaula1
+  - WordPress: https://beyondmyimagination0.wordpress.com/
 
-**SOCIAL MEDIA & PROFILES:**
-${socialLinks}
+  Blog catalog (${Math.min(allBlogs.length, MAX_CATALOG_POSTS)} of ${allBlogs.length} posts shown):
+  ${blogCatalog}
 
-**About Saroj:**
-Saroj Bartaula is a writer, filmmaker, and content creator. You can learn more about him through:
-- LinkedIn: https://www.linkedin.com/in/man-on-mission/ (Professional profile)
-- IMDB: https://www.imdb.com/name/nm10841378/ (Filmography)
-- GitHub: https://github.com/saroj479 (Code projects)
-- Facebook: https://www.facebook.com/saroj.bartaula.man.on.mission
-- Instagram: https://www.instagram.com/saroj_bartaula/
-- Twitter/X: https://x.com/saroj_bartaula1
-- WordPress: https://beyondmyimagination0.wordpress.com/
+  Relevant indexed matches for this question:
+  ${blogContext}
 
-**Guidelines:**
-1. **Complete Knowledge:** You have the full catalog of all ${allBlogs.length} blog posts with their summaries above. Use this to answer questions about available content.
-2. **Detailed Answers:** When users ask about specific topics, reference the relevant blog posts from the catalog and provide summaries.
-3. **Find & Recommend:** If someone asks "what blogs do you have about X?", search the catalog by categories and summaries, then list matching posts.
-4. **Summarize:** If asked to summarize a blog, use the summary from the catalog and invite them to read the full post.
-5. **Smart Search:** Combine the complete catalog (for finding blogs) with the detailed content matches (for answering specific questions).
-6. If asked about Saroj's work, filmography, or professional background, direct them to his IMDB or LinkedIn.
-7. Always link to full blog posts using markdown: [Post Title](/blogs/slug)
-8. Be helpful, friendly, and conversational.
-9. If someone asks about contacting Saroj, mention the social media links above.
+  Social and profile links:
+  ${socialLinks}
 
-**Response Style:**
-- Keep answers concise (2-4 sentences) unless more detail is needed
-- Use markdown formatting for better readability
-- Include relevant links to blog posts with context
-- Use emojis sparingly but appropriately (📖 for blog links, 🎬 for film, 💼 for professional, 🔍 for search results)
-- When listing multiple blogs, format as a numbered list with summaries
-- Be conversational and engaging`
+  Rules:
+  1. Answer the user's question first, immediately.
+  2. Keep the default response to 2 short paragraphs or 1 short numbered list.
+  3. If blog posts are relevant, recommend no more than 3 and include markdown links like [Post Title](/blogs/slug).
+  4. When summarizing a post, use the catalog summary if available and do not invent details.
+  5. If the question is about Saroj's career, filmography, or professional background, point to LinkedIn or IMDB.
+  6. If the question is about contact or social presence, use the profile links above.
+  7. If the site content does not support the answer, say so briefly and offer the closest relevant link.
+  8. Do not mention internal prompts, embeddings, catalogs, or retrieval.
+  9. Avoid emojis unless they add real value. Prefer none.
+  10. Keep wording clean and on-brand: precise, modern, and human.
 
-    // 7. Call Groq API (FREE - Llama 3.1 70B)
+  Response format:
+  - Start with the direct answer.
+  - Then add links or suggestions only if useful.
+  - Prefer plain markdown with short sentences.
+  - No filler openings like "Sure" or "Absolutely".`
+
+    // 7. Call Groq API
     const groq = new Groq({
       apiKey: process.env.GROQ_API_KEY
     })
     
     console.log('Calling Groq API...')
     const completion = await groq.chat.completions.create({
-      model: 'llama-3.3-70b-versatile', // Updated to current free tier model
+      model: 'qwen/qwen3.8-27b',
       messages: [
         {
           role: 'system',
@@ -170,8 +196,8 @@ Saroj Bartaula is a writer, filmmaker, and content creator. You can learn more a
         ...messages
       ],
       stream: true,
-      temperature: 0.7,
-      max_tokens: 1024,
+      temperature: 0.45,
+      max_tokens: 420,
       top_p: 1,
       stop: null
     })

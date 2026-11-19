@@ -22,9 +22,8 @@ export const cleanEmDashes = (text) => {
       .replace(/(?<=\w)\s*—\s*(?=\w)/g, ", ")
       // lone em dash left over (e.g. at end of phrase) → remove
       .replace(/\s*—\s*/g, " ")
-      // tidy double commas / spaces that may result
+      // tidy double commas that may result
       .replace(/,\s*,/g, ",")
-      .replace(/ {2,}/g, " ")
   );
 };
 

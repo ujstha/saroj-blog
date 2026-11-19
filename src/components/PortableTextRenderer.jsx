@@ -30,18 +30,18 @@ export const PortableTextRenderer = ({ value }) => {
         <h3 className="mb-2 text-xl font-medium">{cleanTextChildren(children)}</h3>
       ),
       normal: ({ children }) => (
-        <p className="mb-4 text-base leading-7 text-secondary">{cleanTextChildren(children)}</p>
+        <p className="mb-4 whitespace-pre-wrap text-base leading-7 text-secondary">{cleanTextChildren(children)}</p>
       ),
       blockquote: ({ children }) => (
-        <blockquote className="my-4 border-l-2 pl-4 italic text-secondary">{cleanTextChildren(children)}</blockquote>
+        <blockquote className="my-4 whitespace-pre-wrap border-l-2 pl-4 italic text-secondary">{cleanTextChildren(children)}</blockquote>
       ),
     },
     list: {
       bullet: ({ children }) => (
-        <ul className="mb-4 ml-6 list-disc">{children}</ul>
+        <ul className="mb-4 ml-6 list-disc whitespace-pre-wrap">{children}</ul>
       ),
       number: ({ children }) => (
-        <ol className="mb-4 ml-6 list-decimal">{children}</ol>
+        <ol className="mb-4 ml-6 list-decimal whitespace-pre-wrap">{children}</ol>
       ),
     },
     types: {

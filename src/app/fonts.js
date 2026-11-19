@@ -1,15 +1,17 @@
 // eslint-disable-next-line camelcase
-import { Inter, Merriweather, Noto_Sans_Devanagari } from "next/font/google";
+import { Manrope, Noto_Sans_Devanagari, Space_Grotesk } from "next/font/google";
 
-export const bodyFont = Inter({
+export const bodyFont = Manrope({
   subsets: ["latin", "latin-ext"],
   display: "swap",
+  variable: "--font-body",
 });
 
-export const headingFont = Merriweather({
-  weight: ["700", "900"],
+export const headingFont = Space_Grotesk({
+  weight: ["500", "700"],
   subsets: ["latin", "latin-ext"],
   display: "swap",
+  variable: "--font-heading",
 });
 
 export const nepaliFont = Noto_Sans_Devanagari({

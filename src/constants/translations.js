@@ -10,7 +10,7 @@ export const translations = {
     "hero.name": "I'm Saroj",
     "hero.tagline": "Ideas in Motion",
     "hero.description":
-      "Hi, I'm Saroj. I live in the Milky Way galaxy. Driven by curiosity, I explore the worlds of technology, storytelling and science. Here, I share what I learn and create in the hope of inspiring others to see the world a little differently.",
+      "Hi, I'm Saroj. I live in the Milky Way galaxy and currently work across software, AI, computer vision and human motion. I founded Tenslam Vision to explore motion technology, simulation and Physical AI. Filmmaking is part of my earlier creative background, and this remains the place where I share technology, stories, science and personal ideas.",
 
     // Blog section
     "blog.recentBlogs": "Recent Blogs",
@@ -68,7 +68,7 @@ export const translations = {
     "hero.name": "Soy Saroj",
     "hero.tagline": "Ideas en Movimiento",
     "hero.description":
-      "Hola, soy Saroj. Vivo en la galaxia Vía Láctea. Impulsado por la curiosidad, exploro los mundos de la tecnología, la narrativa y la ciencia. Aquí comparto lo que aprendo y creo con la esperanza de inspirar a otros a ver el mundo de una manera un poco diferente.",
+      "Hola, soy Saroj. Vivo en la Vía Láctea y actualmente trabajo en software, inteligencia artificial, visión por computador y movimiento humano. Fundé Tenslam Vision para explorar la tecnología del movimiento, la simulación y la IA física. El cine forma parte de mi trayectoria creativa anterior, y este sigue siendo el lugar donde comparto tecnología, historias, ciencia e ideas personales.",
 
     // Blog section
     "blog.recentBlogs": "Blogs Recientes",
@@ -128,7 +128,7 @@ export const translations = {
     "hero.name": "म सरोज",
     "hero.tagline": "गतिमा विचारहरू",
     "hero.description":
-      "नमस्ते, म सरोज हुँ। म आकाशगंगा ग्यालेक्सीमा बस्छु। जिज्ञासाले प्रेरित भएर, म प्रविधि, कथा र विज्ञानको संसार अन्वेषण गर्छु। यहाँ, म जे सिक्छु र सिर्जना गर्छु ती साझा गर्छु, अरूलाई संसारलाई अलि फरक रूपमा हेर्न प्रेरित गर्ने आशामा।",
+      "नमस्ते, म सरोज हुँ। म आकाशगंगामा बस्छु र अहिले सफ्टवेयर, कृत्रिम बुद्धिमत्ता, कम्प्युटर भिजन र मानव गतिसम्बन्धी प्रविधिमा काम गर्छु। गति प्रविधि, सिमुलेसन र फिजिकल एआईको अन्वेषण गर्न मैले Tenslam Vision स्थापना गरेको हुँ। चलचित्र निर्माण मेरो अघिल्लो सिर्जनात्मक पृष्ठभूमिको हिस्सा हो, र यहाँ म प्रविधि, कथा, विज्ञान र व्यक्तिगत विचारहरू साझा गर्छु।",
 
     // Blog section
     "blog.recentBlogs": "हालका ब्लगहरू",

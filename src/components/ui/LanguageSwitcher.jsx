@@ -30,7 +30,7 @@ export const LanguageSwitcher = () => {
   }, [open]);
 
   if (!mounted) {
-    return <div className="h-9 w-16 rounded bg-accent1-10" />;
+    return <div className="h-11 w-20 rounded-full bg-accent1-10" />;
   }
 
   const currentLang = languages.find((l) => l.code === language) || languages[0];
@@ -42,11 +42,11 @@ export const LanguageSwitcher = () => {
         aria-label="Switch language"
         aria-expanded={open}
         aria-haspopup="listbox"
-        className="flex items-center gap-1.5 rounded px-2 py-1.5 text-sm font-medium transition-colors bg-accent1-10 hover:bg-accent1-20"
+        className="border-primary/10 bg-background/90 flex min-h-11 items-center gap-1.5 rounded-full border px-3.5 py-2 text-sm font-medium text-primary shadow-[inset_0_1px_0_rgba(255,255,255,0.45)] transition-colors hover:border-accent1/25 hover:bg-accent1/10"
       >
         <GlobeIcon />
         <span className="hidden sm:inline">{currentLang.flag}</span>
-        <span className="text-xs uppercase tracking-wide">{currentLang.code}</span>
+        <span className="text-xs uppercase tracking-[0.18em]">{currentLang.code}</span>
         <ChevronIcon open={open} />
       </button>
 
@@ -54,7 +54,7 @@ export const LanguageSwitcher = () => {
         <div
           role="listbox"
           aria-label="Select language"
-          className="absolute right-0 top-full z-50 mt-2 min-w-[160px] overflow-hidden rounded-lg border border-secondary-10 bg-background shadow-lg"
+          className="border-primary/10 bg-background absolute right-0 top-full z-50 mt-2 min-w-[200px] overflow-hidden rounded-3xl border shadow-[0_18px_50px_rgba(10,18,28,0.14)] backdrop-blur-xl"
         >
           {languages.map((lang) => (
             <button
@@ -65,9 +65,9 @@ export const LanguageSwitcher = () => {
                 setLanguage(lang.code);
                 setOpen(false);
               }}
-              className={`flex w-full items-center gap-3 px-4 py-2.5 text-left text-sm transition-colors hover:bg-accent1-10 ${
+              className={`flex w-full items-center gap-3 px-4 py-3 text-left text-sm transition-colors hover:bg-accent1-10 ${
                 language === lang.code
-                  ? "font-semibold text-accent1 bg-accent1-5"
+                  ? "bg-accent1-5 font-semibold text-accent1"
                   : ""
               }`}
             >
@@ -95,7 +95,7 @@ function GlobeIcon() {
       strokeWidth="2"
       strokeLinecap="round"
       strokeLinejoin="round"
-      className="text-accent1-50"
+      className="text-accent1"
     >
       <circle cx="12" cy="12" r="10" />
       <path d="M2 12h20" />
